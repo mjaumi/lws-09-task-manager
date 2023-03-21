@@ -76,7 +76,7 @@ const AddNewTaskForm = () => {
             teamMember: selectedMemberInfo[0],
             project: selectedProjectInfo[0],
             deadline,
-            status: 'inProgress',
+            status: 'pending',
         });
     }
 

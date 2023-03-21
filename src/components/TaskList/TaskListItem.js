@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDeleteTaskMutation } from '../../features/tasks/tasksApi';
+import { useDeleteTaskMutation, useUpdateStatusMutation } from '../../features/tasks/tasksApi';
 import useGetMonthAndDay from '../../hooks/useGetDayAndMonth';
 
 const TaskListItem = ({ task }) => {
@@ -9,6 +9,7 @@ const TaskListItem = ({ task }) => {
 
     // integration of RTK query hooks here
     const [deleteTask, { isSuccess, isError, isLoading }] = useDeleteTaskMutation();
+    const [updateStatus] = useUpdateStatusMutation();
 
     // getting month and day from deadline using custom hook
     const { day, month } = useGetMonthAndDay(deadline);
@@ -39,9 +40,15 @@ const TaskListItem = ({ task }) => {
     // handler function to update task status
     const updateStatusHandler = (e) => {
         setStatusValue(e.target.value);
-        console.log(statusValue);
+        updateStatus({
+            taskId: id,
+            data: {
+                status: e.target.value,
+            }
+        });
     }
 
+    // handler function to delete task from the server
     const deleteTaskHandler = () => {
         deleteTask(id);
     }

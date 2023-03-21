@@ -36,7 +36,7 @@ export const tasksApi = apiSlice.injectEndpoints({
                 method: 'DELETE',
             }),
 
-            // updating tasks optimistically after deleting from server
+            // updating tasks optimistically before deleting from server
             async onQueryStarted(taskId, { queryFulfilled, dispatch }) {
                 let patchResult = dispatch(
                     apiSlice.util.updateQueryData('getTasks', undefined,
@@ -54,6 +54,14 @@ export const tasksApi = apiSlice.injectEndpoints({
                 });
             }
         }),
+        // PATCH Mutation to update status of a task
+        updateStatus: builder.mutation({
+            query: ({ taskId, data }) => ({
+                url: `/tasks/${taskId}`,
+                method: 'PATCH',
+                body: data,
+            }),
+        }),
     }),
 });
 
@@ -61,4 +69,5 @@ export const {
     useGetTasksQuery,
     useAddTaskMutation,
     useDeleteTaskMutation,
+    useUpdateStatusMutation,
 } = tasksApi;
