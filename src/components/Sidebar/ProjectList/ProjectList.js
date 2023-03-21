@@ -6,7 +6,7 @@ const ProjectList = () => {
     // integration or RTK query hooks here
     const { data: projects, isLoading, isError } = useGetProjectsQuery();
 
-    // deciding what to render
+    // deciding what to render here
     let content = null;
 
     if (isLoading) {
