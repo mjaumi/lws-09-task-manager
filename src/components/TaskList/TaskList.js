@@ -22,8 +22,8 @@ const TaskList = () => {
     }
 
     if (!isLoading && !isError && taskList.length) {
-        content = taskList.map(task => <TaskListItem
-            key={task.id}
+        content = taskList?.map(task => <TaskListItem
+            key={task?.id}
             task={task}
         />);
     }

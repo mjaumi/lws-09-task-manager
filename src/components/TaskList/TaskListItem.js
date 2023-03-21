@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDeleteTaskMutation } from '../../features/tasks/tasksApi';
 import useGetMonthAndDay from '../../hooks/useGetDayAndMonth';
 
 const TaskListItem = ({ task }) => {
     // destructuring the task object here
-    const { taskName, teamMember, project, deadline, status } = task || {};
+    const { id, taskName, teamMember, project, deadline, status } = task || {};
+
+    // integration of RTK query hooks here
+    const [deleteTask, { isSuccess, isError, isLoading }] = useDeleteTaskMutation();
 
     // getting month and day from deadline using custom hook
     const { day, month } = useGetMonthAndDay(deadline);
@@ -14,6 +18,18 @@ const TaskListItem = ({ task }) => {
 
     // integration of react-router-dom hooks here
     const navigate = useNavigate();
+
+    // showing notification to the user based on success or error here
+    useEffect(() => {
+        if (isSuccess) {
+            console.log('DELETE Success');
+            navigate('/');
+        }
+
+        if (isError) {
+            console.log('DELETE Error');
+        }
+    }, [isSuccess, isError, navigate]);
 
     // handler function to navigate to edit task page
     const editPageNavigationHandler = () => {
@@ -26,6 +42,10 @@ const TaskListItem = ({ task }) => {
         console.log(statusValue);
     }
 
+    const deleteTaskHandler = () => {
+        deleteTask(id);
+    }
+
     // rendering a single task item component here
     return (
         <div className='lws-task'>
@@ -36,18 +56,18 @@ const TaskListItem = ({ task }) => {
 
             <div className='lws-taskContainer'>
                 <h1 className='lws-task-title'>{taskName}</h1>
-                <span className={`lws-task-badge ${project.colorClass}`}>{project.projectName}</span>
+                <span className={`lws-task-badge ${project?.colorClass}`}>{project?.projectName}</span>
             </div>
 
             <div className='flex items-center gap-4'>
                 <div className='flex items-center gap-2'>
-                    <img src={teamMember.avatar} className='team-avater' alt={`avatar of ${teamMember.name}`} />
-                    <p className='lws-task-assignedOn'>{teamMember.name}</p>
+                    <img src={teamMember?.avatar} className='team-avater' alt={`avatar of ${teamMember?.name}`} />
+                    <p className='lws-task-assignedOn'>{teamMember?.name}</p>
                 </div>
 
                 {
-                    status === 'completed' ?
-                        <button className='lws-delete'>
+                    statusValue === 'completed' ?
+                        <button onClick={deleteTaskHandler} className='lws-delete' disabled={isLoading}>
                             <svg
                                 fill='none'
                                 viewBox='0 0 24 24'

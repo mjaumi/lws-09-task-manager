@@ -9,18 +9,17 @@ export const tasksApi = apiSlice.injectEndpoints({
         }),
         // POST Mutation to add new task in the server
         addTask: builder.mutation({
-            query: (data) => ({
+            query: data => ({
                 url: '/tasks',
                 method: 'POST',
                 body: data,
             }),
 
+            // updating tasks pessimistically after adding a new task
             async onQueryStarted(arg, { queryFulfilled, dispatch }) {
                 const task = await queryFulfilled;
 
-                // updating tasks pessimistically after adding a new task
                 if (task?.data?.id) {
-                    console.log(task.data.id);
                     dispatch(
                         apiSlice.util.updateQueryData('getTasks', undefined,
                             draft => {
@@ -30,10 +29,36 @@ export const tasksApi = apiSlice.injectEndpoints({
                 }
             }
         }),
+        // DELETE Mutation to delete a task from the server
+        deleteTask: builder.mutation({
+            query: taskId => ({
+                url: `/tasks/${taskId}`,
+                method: 'DELETE',
+            }),
+
+            // updating tasks optimistically after deleting from server
+            async onQueryStarted(taskId, { queryFulfilled, dispatch }) {
+                let patchResult = dispatch(
+                    apiSlice.util.updateQueryData('getTasks', undefined,
+                        draft => {
+                            // eslint-disable-next-line eqeqeq
+                            const deletedTaskIndex = draft.findIndex(t => t.id == taskId);
+
+                            console.log('Deleted Task Index: ', deletedTaskIndex);
+                            draft.splice(deletedTaskIndex, 1);
+                        })
+                );
+
+                queryFulfilled.catch(() => {
+                    patchResult.undo();
+                });
+            }
+        }),
     }),
 });
 
 export const {
     useGetTasksQuery,
     useAddTaskMutation,
+    useDeleteTaskMutation,
 } = tasksApi;
