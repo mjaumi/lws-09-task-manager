@@ -8,11 +8,16 @@ const TaskList = () => {
     const { data: taskList, isLoading, isError } = useGetTasksQuery();
 
     // integration of react-redux hooks here
-    const { filterBy } = useSelector(state => state.filters);
+    const { filterBy, searchBy } = useSelector(state => state.filters);
 
     // filtering the tasks based on selected projects here
     const filterTasksByProjects = task => {
         return filterBy.includes(task.project.projectName);
+    }
+
+    // searching tasks based on their title here
+    const searchTasksByTaskName = task => {
+        return task.taskName.toLowerCase().includes(searchBy.toLowerCase());
     }
 
     // deciding what to render here
@@ -32,6 +37,7 @@ const TaskList = () => {
 
     if (!isLoading && !isError && taskList.length) {
         content = taskList
+            .filter(searchTasksByTaskName)
             .filter(filterTasksByProjects)
             .map(task => <TaskListItem
                 key={task?.id}
