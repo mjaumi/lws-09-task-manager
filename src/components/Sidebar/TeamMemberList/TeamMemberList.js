@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetTeamQuery } from '../../../features/team/teamSlice';
+import { useGetTeamQuery } from '../../../features/team/teamApi';
 import TeamMemberListItem from './TeamMemberListItem';
 
 const TeamMemberList = () => {
