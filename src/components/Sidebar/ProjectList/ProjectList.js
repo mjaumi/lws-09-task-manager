@@ -14,7 +14,7 @@ const ProjectList = () => {
     }
 
     if (!isLoading && isError) {
-        content = <p>{error}</p>;
+        content = <p>{error.message}</p>;
     }
 
     if (!isLoading && !isError && !projects.length) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { alterFilter } from '../../../features/filters/filtersSlice';
 
@@ -12,18 +12,19 @@ const ProjectListItem = ({ project }) => {
     // integration or react hooks here
     const [isChecked, setIsChecked] = useState(true);
 
-    // altering the filter state here
-    useEffect(() => {
+    // handler function for altering the filter state here
+    const alterFilterHandler = e => {
         dispatch(alterFilter({
             value: projectName,
-            isChecked,
+            isChecked: e.target.checked,
         }));
-    }, [dispatch, projectName, isChecked]);
+        setIsChecked(e.target.checked);
+    }
 
     // rendering a single project list item component here
     return (
         <div className={`checkbox-container ${colorClass}`}>
-            <input type='checkbox' onChange={e => setIsChecked(e.target.checked)} className={colorClass} checked={isChecked} />
+            <input type='checkbox' onChange={alterFilterHandler} className={colorClass} checked={isChecked} />
             <p className='label'>{projectName}</p>
         </div>
     );

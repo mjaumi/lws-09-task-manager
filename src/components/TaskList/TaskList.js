@@ -13,7 +13,7 @@ const TaskList = () => {
 
     // filtering the tasks based on selected projects here
     const filterTasksByProjects = task => {
-        return filterBy.includes(task.project.projectName);
+        return filterBy.indexOf(task.project.projectName) > -1;
     }
 
     // searching tasks based on their title here
@@ -29,7 +29,7 @@ const TaskList = () => {
     }
 
     if (!isLoading && isError) {
-        content = <h3 className='text-center font-medium text-xl'>{error}</h3>;
+        content = <h3 className='text-center font-medium text-xl'>{error.message}</h3>;
     }
 
     if (!isLoading && !isError && !taskList.length) {
@@ -40,10 +40,10 @@ const TaskList = () => {
         taskList.filter(searchTasksByTaskName).length ?
             taskList.filter(filterTasksByProjects).length ?
                 content = taskList
-                    .filter(searchTasksByTaskName)
                     .filter(filterTasksByProjects)
+                    .filter(searchTasksByTaskName)
                     .map(task => <TaskListItem
-                        key={task?.id}
+                        key={task.id}
                         task={task}
                     />)
                 :
