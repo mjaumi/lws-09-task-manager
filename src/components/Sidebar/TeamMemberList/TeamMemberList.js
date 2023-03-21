@@ -4,21 +4,21 @@ import TeamMemberListItem from './TeamMemberListItem';
 
 const TeamMemberList = () => {
     // integration of RTK query hooks here
-    const { data: team, isLoading, isError } = useGetTeamQuery();
+    const { data: team, isLoading, isError, error } = useGetTeamQuery();
 
     // deciding what to render here
     let content = null;
 
     if (isLoading) {
-        content = <h3>Loading...</h3>;
+        content = <p>Loading...</p>;
     }
 
     if (!isLoading && isError) {
-        content = <h3>Failed to load the projects!!</h3>;
+        content = <p>{error}</p>;
     }
 
     if (!isLoading && !isError && !team.length) {
-        content = <h3>No Project Found!!</h3>;
+        content = <p>No Team Member Found!!</p>;
     }
 
     if (!isLoading && !isError && team.length) {

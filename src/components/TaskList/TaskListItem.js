@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useDeleteTaskMutation, useUpdateStatusMutation } from '../../features/tasks/tasksApi';
 import useGetMonthAndDay from '../../hooks/useGetDayAndMonth';
 
@@ -8,7 +9,7 @@ const TaskListItem = ({ task }) => {
     const { id, taskName, teamMember, project, deadline, status } = task || {};
 
     // integration of RTK query hooks here
-    const [deleteTask, { isSuccess, isError, isLoading }] = useDeleteTaskMutation();
+    const [deleteTask, { isSuccess: isDeleteSuccess, isError: isDeleteError, isLoading }] = useDeleteTaskMutation();
     const [updateStatus] = useUpdateStatusMutation();
 
     // getting month and day from deadline using custom hook
@@ -22,15 +23,14 @@ const TaskListItem = ({ task }) => {
 
     // showing notification to the user based on success or error here
     useEffect(() => {
-        if (isSuccess) {
-            console.log('DELETE Success');
-            navigate('/');
+        if (isDeleteSuccess) {
+            toast.success('Task Deleted Successfully!!!');
         }
 
-        if (isError) {
-            console.log('DELETE Error');
+        if (isDeleteError) {
+            toast.error('Failed To Delete The Task!!!');
         }
-    }, [isSuccess, isError, navigate]);
+    }, [isDeleteSuccess, isDeleteError]);
 
     // handler function to navigate to edit task page
     const editPageNavigationHandler = () => {

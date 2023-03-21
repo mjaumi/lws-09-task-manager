@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { projectsApi, useGetProjectsQuery } from '../../features/projects/projectsApi';
 import { useAddTaskMutation } from '../../features/tasks/tasksApi';
 import { teamApi, useGetTeamQuery } from '../../features/team/teamApi';
@@ -45,26 +46,16 @@ const AddNewTaskForm = () => {
         }
     }, [assignedTo, dispatch]);
 
-
-    // resetting the form after submission
-    const resetForm = () => {
-        setAssignedTo('');
-        setDeadline('');
-        setProjectName('');
-        setTaskName('');
-    }
-
     // showing notification to the user based on success or error here
     useEffect(() => {
         if (isSuccess) {
-            console.log('Success');
+            toast.success('New Task Added Successfully!!!');
             navigate('/');
         }
 
         if (isError) {
-            console.log('Error');
+            toast.error('Failed To Add New Task!!!');
         }
-        resetForm();
     }, [isSuccess, isError, navigate]);
 
 

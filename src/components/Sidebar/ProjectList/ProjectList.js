@@ -4,21 +4,21 @@ import ProjectListItem from './ProjectListItem';
 
 const ProjectList = () => {
     // integration or RTK query hooks here
-    const { data: projects, isLoading, isError } = useGetProjectsQuery();
+    const { data: projects, isLoading, isError, error } = useGetProjectsQuery();
 
     // deciding what to render here
     let content = null;
 
     if (isLoading) {
-        content = <h3>Loading...</h3>;
+        content = <p>Loading...</p>;
     }
 
     if (!isLoading && isError) {
-        content = <h3>Failed to load the projects!!</h3>;
+        content = <p>{error}</p>;
     }
 
     if (!isLoading && !isError && !projects.length) {
-        content = <h3>No Project Found!!</h3>;
+        content = <p>No Projects Found!!</p>;
     }
 
     if (!isLoading && !isError && projects.length) {

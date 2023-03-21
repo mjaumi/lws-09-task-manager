@@ -1,11 +1,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useGetTasksQuery } from '../../features/tasks/tasksApi';
+import Loading from '../Loading/Loading';
 import TaskListItem from './TaskListItem';
 
 const TaskList = () => {
     // integration of RTK query hooks here
-    const { data: taskList, isLoading, isError } = useGetTasksQuery();
+    const { data: taskList, isLoading, isError, error } = useGetTasksQuery();
 
     // integration of react-redux hooks here
     const { filterBy, searchBy } = useSelector(state => state.filters);
@@ -24,25 +25,31 @@ const TaskList = () => {
     let content = null;
 
     if (isLoading) {
-        content = <h3>Loading...</h3>;
+        content = <Loading />;
     }
 
     if (!isLoading && isError) {
-        content = <h3>Failed to load the projects!!</h3>;
+        content = <h3 className='text-center font-medium text-xl'>{error}</h3>;
     }
 
     if (!isLoading && !isError && !taskList.length) {
-        content = <h3>No Project Found!!</h3>;
+        content = <h3 className='text-center font-medium text-xl'>No Tasks Found!!</h3>;
     }
 
     if (!isLoading && !isError && taskList.length) {
-        content = taskList
-            .filter(searchTasksByTaskName)
-            .filter(filterTasksByProjects)
-            .map(task => <TaskListItem
-                key={task?.id}
-                task={task}
-            />);
+        taskList.filter(searchTasksByTaskName).length ?
+            taskList.filter(filterTasksByProjects).length ?
+                content = taskList
+                    .filter(searchTasksByTaskName)
+                    .filter(filterTasksByProjects)
+                    .map(task => <TaskListItem
+                        key={task?.id}
+                        task={task}
+                    />)
+                :
+                content = <h3 className='text-center font-medium text-xl'>No Tasks Found!!</h3>
+            :
+            content = <h3 className='text-center font-medium text-xl'>No Tasks Found!!</h3>
     }
 
     // rendering task list component here

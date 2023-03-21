@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { projectsApi } from '../../features/projects/projectsApi';
 import { useEditTaskMutation } from '../../features/tasks/tasksApi';
 import { teamApi } from '../../features/team/teamApi';
@@ -49,12 +50,12 @@ const Form = ({ task, team, projects }) => {
     // showing notification to the user based on success or error here
     useEffect(() => {
         if (isSuccess) {
-            console.log('Success');
+            toast.success('Task Modified Successfully!!!');
             navigate('/');
         }
 
         if (isError) {
-            console.log('Error');
+            toast.error('Failed To Edit Existing Task!!!');
         }
     }, [isSuccess, isError, navigate]);
 
