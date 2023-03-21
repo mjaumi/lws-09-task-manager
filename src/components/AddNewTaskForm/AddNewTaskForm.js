@@ -1,6 +1,84 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { projectsApi, useGetProjectsQuery } from '../../features/projects/projectsApi';
+import { useAddTaskMutation } from '../../features/tasks/tasksApi';
+import { teamApi, useGetTeamQuery } from '../../features/team/teamApi';
 
 const AddNewTaskForm = () => {
+    // integration of RTK query hooks here
+    const { data: projects } = useGetProjectsQuery();
+    const { data: team } = useGetTeamQuery();
+    const [addTask, { isLoading, isSuccess, isError }] = useAddTaskMutation();
+
+    // integration of react hooks here
+    const [taskName, setTaskName] = useState('');
+    const [assignedTo, setAssignedTo] = useState('');
+    const [projectName, setProjectName] = useState('');
+    const [deadline, setDeadline] = useState('');
+    const [selectedProjectInfo, setSelectedProjectInfo] = useState(undefined);
+    const [selectedMemberInfo, setSelectedMemberInfo] = useState(undefined);
+
+    // integration of react-redux hooks here
+    const dispatch = useDispatch();
+
+    // integration of react-router-dom hooks here
+    const navigate = useNavigate();
+
+    // getting selected project for the new task here
+    useEffect(() => {
+        if (projectName) {
+            dispatch(projectsApi.endpoints.getProject.initiate(projectName))
+                .unwrap()
+                .then(data => setSelectedProjectInfo(data))
+                .catch();
+        }
+    }, [projectName, dispatch]);
+
+    // getting selected team member for the new task here
+    useEffect(() => {
+        if (assignedTo) {
+            dispatch(teamApi.endpoints.getTeamMember.initiate(assignedTo))
+                .unwrap()
+                .then(data => setSelectedMemberInfo(data))
+                .catch();
+        }
+    }, [assignedTo, dispatch]);
+
+
+    // resetting the form after submission
+    const resetForm = () => {
+        setAssignedTo('');
+        setDeadline('');
+        setProjectName('');
+        setTaskName('');
+    }
+
+    // showing notification to the user based on success or error here
+    useEffect(() => {
+        if (isSuccess) {
+            console.log('Success');
+            navigate('/');
+        }
+
+        if (isError) {
+            console.log('Error');
+        }
+        resetForm();
+    }, [isSuccess, isError, navigate]);
+
+
+    const addFormSubmissionHandler = e => {
+        e.preventDefault();
+
+        addTask({
+            taskName,
+            teamMember: selectedMemberInfo[0],
+            project: selectedProjectInfo[0],
+            deadline,
+            status: 'inProgress',
+        });
+    }
 
     // rendering add new task form component here
     return (
@@ -10,51 +88,59 @@ const AddNewTaskForm = () => {
             </h1>
 
             <div className='justify-center mb-10 space-y-2 md:flex md:space-y-0'>
-                <form className='space-y-6'>
+                <form className='space-y-6' onSubmit={addFormSubmissionHandler}>
                     <div className='fieldContainer'>
-                        <label for='lws-taskName'>Task Name</label>
+                        <label htmlFor='lws-taskName'>Task Name</label>
                         <input
                             type='text'
                             name='taskName'
                             id='lws-taskName'
                             required
                             placeholder='Implement RTK Query'
+                            value={taskName}
+                            onChange={e => setTaskName(e.target.value)}
                         />
                     </div>
 
                     <div className='fieldContainer'>
                         <label>Assign To</label>
-                        <select name='teamMember' id='lws-teamMember' required>
-                            <option value='' hidden selected>Select Job</option>
-                            <option>Sumit Saha</option>
-                            <option>Sadh Hasan</option>
-                            <option>Akash Ahmed</option>
-                            <option>Md Salahuddin</option>
-                            <option>Riyadh Hassan</option>
-                            <option>Ferdous Hassan</option>
-                            <option>Arif Almas</option>
+                        <select name='teamMember' id='lws-teamMember' required value={assignedTo}
+                            onChange={e => setAssignedTo(e.target.value)}>
+                            <option value='' hidden>Select Job</option>
+                            {
+                                team?.map(member => <option
+                                    key={member.id}
+                                >
+                                    {member.name}
+                                </option>
+                                )
+                            }
                         </select>
                     </div>
                     <div className='fieldContainer'>
-                        <label for='lws-projectName'>Project Name</label>
-                        <select id='lws-projectName' name='projectName' required>
-                            <option value='' hidden selected>Select Project</option>
-                            <option>Scoreboard</option>
-                            <option>Flight Booking</option>
-                            <option>Product Cart</option>
-                            <option>Book Store</option>
-                            <option>Blog Application</option>
-                            <option>Job Finder</option>
+                        <label htmlFor='lws-projectName'>Project Name</label>
+                        <select id='lws-projectName' name='projectName' required value={projectName}
+                            onChange={e => setProjectName(e.target.value)}>
+                            <option value='' hidden>Select Project</option>
+                            {
+                                projects?.map(project => <option
+                                    key={project.id}
+                                >
+                                    {project.projectName}
+                                </option>
+                                )
+                            }
                         </select>
                     </div>
 
                     <div className='fieldContainer'>
-                        <label for='lws-deadline'>Deadline</label>
-                        <input type='date' name='deadline' id='lws-deadline' required />
+                        <label htmlFor='lws-deadline'>Deadline</label>
+                        <input type='date' name='deadline' id='lws-deadline' required value={deadline}
+                            onChange={e => setDeadline(e.target.value)} />
                     </div>
 
                     <div className='text-right'>
-                        <button type='submit' className='lws-submit'>Save</button>
+                        <button type='submit' className='lws-submit' disabled={isLoading}>Save</button>
                     </div>
                 </form>
             </div>

@@ -4,8 +4,6 @@ const ProjectListItem = ({ project }) => {
     // destructuring the project object here
     const { projectName, colorClass } = project || {};
 
-    console.log(colorClass);
-
     // rendering a single project list item component here
     return (
         <div className={`checkbox-container ${colorClass}`}>
