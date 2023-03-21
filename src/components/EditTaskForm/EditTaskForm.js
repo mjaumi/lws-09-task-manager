@@ -33,7 +33,7 @@ const EditTaskForm = () => {
         content = (
             <>
                 <h1 className='mt-4 mb-8 text-3xl font-bold text-center text-gray-800'>
-                    Edit Existing Task for Your Team
+                    Edit Task for Your Team
                 </h1>
                 <Form
                     task={task}
