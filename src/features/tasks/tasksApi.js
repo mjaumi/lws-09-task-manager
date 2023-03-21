@@ -7,6 +7,10 @@ export const tasksApi = apiSlice.injectEndpoints({
         getTasks: builder.query({
             query: () => '/tasks',
         }),
+        // GET Query to get a single task from the server by taskId
+        getTask: builder.query({
+            query: taskId => `/tasks/${taskId}`,
+        }),
         // POST Mutation to add new task in the server
         addTask: builder.mutation({
             query: data => ({
@@ -44,7 +48,6 @@ export const tasksApi = apiSlice.injectEndpoints({
                             // eslint-disable-next-line eqeqeq
                             const deletedTaskIndex = draft.findIndex(t => t.id == taskId);
 
-                            console.log('Deleted Task Index: ', deletedTaskIndex);
                             draft.splice(deletedTaskIndex, 1);
                         })
                 );
@@ -52,6 +55,31 @@ export const tasksApi = apiSlice.injectEndpoints({
                 queryFulfilled.catch(() => {
                     patchResult.undo();
                 });
+            }
+        }),
+        // PATCH Mutation to edit task from the server
+        editTask: builder.mutation({
+            query: ({ taskId, data }) => ({
+                url: `/tasks/${taskId}`,
+                method: 'PATCH',
+                body: data,
+            }),
+
+            // updating tasks pessimistically after editing an existing task
+            async onQueryStarted({ taskId, data }, { queryFulfilled, dispatch }) {
+                const editedTask = await queryFulfilled;
+
+                if (editedTask?.data?.id) {
+                    dispatch(apiSlice.util.updateQueryData('getTasks', undefined,
+                        draft => {
+                            // eslint-disable-next-line eqeqeq
+                            const editedTaskIndex = draft.findIndex(t => t.id == taskId);
+
+                            draft.splice(editedTaskIndex, 1, editedTask.data);
+                        }
+                    )
+                    );
+                }
             }
         }),
         // PATCH Mutation to update status of a task
@@ -67,7 +95,9 @@ export const tasksApi = apiSlice.injectEndpoints({
 
 export const {
     useGetTasksQuery,
+    useGetTaskQuery,
     useAddTaskMutation,
     useDeleteTaskMutation,
+    useEditTaskMutation,
     useUpdateStatusMutation,
 } = tasksApi;

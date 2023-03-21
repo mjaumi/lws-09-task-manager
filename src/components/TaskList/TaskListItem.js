@@ -34,7 +34,7 @@ const TaskListItem = ({ task }) => {
 
     // handler function to navigate to edit task page
     const editPageNavigationHandler = () => {
-        navigate('/edit-task');
+        navigate(`/edit-task/${id}`);
     }
 
     // handler function to update task status

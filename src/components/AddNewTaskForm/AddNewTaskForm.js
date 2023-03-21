@@ -68,6 +68,7 @@ const AddNewTaskForm = () => {
     }, [isSuccess, isError, navigate]);
 
 
+    // handler function to handle add new task form submission
     const addFormSubmissionHandler = e => {
         e.preventDefault();
 

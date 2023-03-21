@@ -7,5 +7,7 @@ export const store = configureStore({
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
-  middleware: getDefaultMiddlewares => getDefaultMiddlewares().concat(apiSlice.middleware),
+  middleware: getDefaultMiddlewares => getDefaultMiddlewares({
+    serializableCheck: false,
+  }).concat(apiSlice.middleware),
 });
