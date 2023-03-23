@@ -127,7 +127,7 @@ const AddNewTaskForm = () => {
 
                     <div className='fieldContainer'>
                         <label htmlFor='lws-deadline'>Deadline</label>
-                        <input type='date' name='deadline' id='lws-deadline' required value={deadline}
+                        <input type='date' name='deadline' id='lws-deadline' min={new Date().toISOString().split('T')[0]} required value={deadline}
                             onChange={e => setDeadline(e.target.value)} />
                     </div>
 

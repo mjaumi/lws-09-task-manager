@@ -4,7 +4,7 @@ import TeamMemberListItem from './TeamMemberListItem';
 
 const TeamMemberList = () => {
     // integration of RTK query hooks here
-    const { data: team, isLoading, isError, error } = useGetTeamQuery();
+    const { data: team, isLoading, isError } = useGetTeamQuery();
 
     // deciding what to render here
     let content = null;
@@ -14,7 +14,7 @@ const TeamMemberList = () => {
     }
 
     if (!isLoading && isError) {
-        content = <p>{error.message}</p>;
+        content = <p>Failed To Load The Team List!!</p>;
     }
 
     if (!isLoading && !isError && !team.length) {

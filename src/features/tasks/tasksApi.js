@@ -52,7 +52,7 @@ export const tasksApi = apiSlice.injectEndpoints({
                         })
                 );
 
-                queryFulfilled.catch(() => {
+                await queryFulfilled.catch(() => {
                     patchResult.undo();
                 });
             }

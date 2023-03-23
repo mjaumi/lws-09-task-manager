@@ -6,7 +6,7 @@ import TaskListItem from './TaskListItem';
 
 const TaskList = () => {
     // integration of RTK query hooks here
-    const { data: taskList, isLoading, isError, error } = useGetTasksQuery();
+    const { data: taskList, isLoading, isError } = useGetTasksQuery();
 
     // integration of react-redux hooks here
     const { filterBy, searchBy } = useSelector(state => state.filters);
@@ -29,7 +29,7 @@ const TaskList = () => {
     }
 
     if (!isLoading && isError) {
-        content = <h3 className='text-center font-medium text-xl'>{error.message}</h3>;
+        content = <h3 className='text-center font-medium text-xl'>Failed To Load The Tasks!!</h3>;
     }
 
     if (!isLoading && !isError && !taskList.length) {
