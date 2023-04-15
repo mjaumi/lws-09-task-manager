@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const apiSlice = createApi({
     reducerPath: 'taskManagerAPI',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:9000',
+        baseUrl: 'https://lws-task-manager.onrender.com',
     }),
     tagTypes: [],
     endpoints: builder => ({}),
